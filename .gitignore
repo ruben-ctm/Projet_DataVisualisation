@@ -1,0 +1,14 @@
+# Données de l'enquête : jamais versionnées (téléchargées par get_data.py)
+data/
+
+# Python / environnements
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Éditeurs / système
+.vscode/
+.idea/
+.DS_Store
