@@ -50,3 +50,33 @@ def apply_filters(df: pd.DataFrame, f: Filters, pro_col: str = "is_pro_dev") -> 
     if f.org_sizes and "org_label" in df:
         mask &= df["org_label"].isin(f.org_sizes)
     return df[mask]
+
+
+def describe(f: Filters, year: int) -> str:
+    """Phrase « qui » de la population (sans effectif)."""
+    parts = [SCOPE_LABELS[f.scope].lower()]
+    if f.countries:
+        parts.append("pays : " + ", ".join(f.countries) if len(f.countries) <= 3 else f"{len(f.countries)} pays")
+    if not f.exp_is_full:
+        parts.append(f"ancienneté {f.exp_range[0]} à {f.exp_range[1]}" if f.exp_range[0] != f.exp_range[1]
+                     else f"ancienneté {f.exp_range[0]}")
+    if f.org_sizes:
+        parts.append("taille d'organisation filtrée")
+    return f"{', '.join(parts)}, enquête Stack Overflow {year}"
+
+
+def caption(f: Filters, year: int, n_question: int, n_population: int | None = None,
+            question_note: str = "") -> str:
+    """Légende de population d'une figure : qui, quelle année, combien de répondants."""
+    txt = f"**Population** : {describe(f, year)}. **n = {n_question:,}** répondants".replace(",", " ")
+    if n_population is not None and n_population != n_question:
+        txt += f" à cette question (sur {n_population:,} dans la population filtrée)".replace(",", " ")
+    txt += "."
+    if question_note:
+        txt += f" {question_note}"
+    return txt + " " + VOLONTAIRES
+
+
+def plain_caption(f: Filters, year: int, n_question: int) -> str:
+    """Version courte, sans mise en forme, pour le pied des figures matplotlib."""
+    return f"Population : {describe(f, year)} ; n = {n_question:,} répondants.".replace(",", " ")
