@@ -1,0 +1,14 @@
+id,affirmation,valeur,texte,n,ic_bas,ic_haut,population,calcul
+P01,Utilisent l'IA au travail,0.8731,87 %,11803,0.867,0.879,"Développeurs professionnels, Stack Overflow 2026",indicators.overall_adoption
+P02,"IA jugée capable (bonne ou très bonne), 2025",0.3425,34 %,20397,0.336,0.349,"Développeurs professionnels, Stack Overflow 2025, ayant un avis",indicators.headline
+P03,"IA jugée capable (bonne ou très bonne), 2026",0.5977,60 %,9598,0.5879,0.6075,"Développeurs professionnels, Stack Overflow 2026, ayant un avis",indicators.headline
+P04,"Attitude favorable, 2025",0.6278,63 %,23737,0.6216,0.6339,"Développeurs professionnels, Stack Overflow 2025",indicators.headline
+P05,"Attitude favorable, 2026",0.6381,64 %,10156,0.6287,0.6474,"Développeurs professionnels, Stack Overflow 2026",indicators.headline
+P06,Confiance seulement si le résultat est vérifiable,0.4858,49 %,10150,0.4761,0.4955,"Développeurs professionnels, Stack Overflow 2026",indicators.headline
+P07,Confiance y compris pour les décisions importantes,0.0688,7 %,10150,0.064,0.0739,"Développeurs professionnels, Stack Overflow 2026",indicators.headline
+P08,"IA jugée capable parmi les utilisateurs d'IA, 2025",0.3664,37 %,18537,0.3595,0.3734,"Développeurs professionnels, Stack Overflow 2025, utilisateurs d'IA",contrôle (AISelect = Yes)
+P09,"IA jugée capable parmi les utilisateurs d'IA, 2026",0.5979,60 %,9596,0.588,0.6076,"Développeurs professionnels, Stack Overflow 2026, utilisateurs d'IA",contrôle (ai_user = 1)
+P10,"A répondu à la question de capacité, 2025",0.7036,70 %,34146,0.6988,0.7084,"Développeurs professionnels, Stack Overflow 2025, tous",taux de réponse
+P11,"A répondu à la question de capacité, 2026",0.5041,50 %,20220,0.4972,0.5109,"Développeurs professionnels, Stack Overflow 2026, tous",taux de réponse
+P12,Erreur ayant fait perdre le plus de temps : Code plausible mais faux,0.7189,72 %,9514,0.7098,0.7279,"Développeurs professionnels, Stack Overflow 2026, ayant répondu",axes.couts.disruption_shares
+P13,Erreur ayant fait perdre le plus de temps : Code généré difficile à relire,0.5828,58 %,9514,0.5729,0.5927,"Développeurs professionnels, Stack Overflow 2026, ayant répondu",axes.couts.disruption_shares
