@@ -68,3 +68,55 @@ def _sync() -> None:
 def _reset() -> None:
     st.session_state["filters"] = Filters()
     st.session_state["filters_ver"] += 1  # de nouvelles clés => widgets remis à leurs valeurs par défaut
+
+
+def sidebar_filters(d26: pd.DataFrame) -> Filters:
+    """Filtres communs à toutes les pages. Chaque filtre répond à une question du lecteur."""
+    _init_session()
+    f: Filters = st.session_state["filters"]
+    countries = data.top_countries(d26[d26["is_pro_dev"]], n=15)
+    for c in f.countries:  # une sélection existante reste proposée
+        if c not in countries:
+            countries.append(c)
+    with st.sidebar:
+        st.header("Population")
+        st.radio("Qui regarde-t-on ?", list(SCOPE_LABELS), format_func=SCOPE_LABELS.get,
+                 index=list(SCOPE_LABELS).index(f.scope), key=_k("scope"), on_change=_sync,
+                 help="Par défaut : les développeurs professionnels. " + SCOPE_HELP[f.scope])
+        st.multiselect("Pays", countries, default=list(f.countries), key=_k("countries"), on_change=_sync,
+                       placeholder="Tous les pays",
+                       help="La France compte moins de répondants que les États-Unis ou l'Allemagne : "
+                            "les figures le disent quand l'effectif devient trop faible.")
+        st.select_slider("Ancienneté professionnelle", options=EXP_BANDS, value=f.exp_range, key=_k("exp"),
+                         on_change=_sync, help="Années d'expérience professionnelle déclarées. "
+                                               "Restreindre la plage retire les répondants qui n'ont pas répondu.")
+        st.multiselect("Taille de l'organisation", list(ORG_SIZE.values()), default=list(f.org_sizes),
+                       key=_k("org"), on_change=_sync, placeholder="Toutes les tailles",
+                       help="Nombre de personnes employées par l'employeur principal.")
+        st.button("Réinitialiser les filtres", on_click=_reset, use_container_width=True)
+        st.caption("Les filtres s'appliquent à toutes les pages.")
+        with st.expander("À propos"):
+            st.markdown(
+                "**Source :** enquête annuelle Stack Overflow Developer Survey 2026, comparée à 2025 lorsque les questions sont "
+                "comparables. Les répondants sont des volontaires : les parts décrivent les répondants, pas tous les développeurs.\n\n"
+                "Documentation : `README.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `HARMONISATION.md` et le dossier `docs/`.")
+            st.caption(f"Réexécutions du script dans cette session : {st.session_state['reruns']}")
+    return st.session_state["filters"]
+
+
+def setup(page_title: str, icon: str = "📊"):
+    """Début de chaque page : config, données, filtres. Renvoie (d26, d25, filtres, pop26, pop25)."""
+    st.set_page_config(page_title=f"{page_title} · IA au travail", page_icon=icon, layout="wide")
+    st.session_state["reruns"] = st.session_state.get("reruns", 0) + 1  # Streamlit réexécute tout le script à chaque interaction
+    try:
+        ensure_data()
+        d26, d25 = load_frames()
+    except Exception as exc:  # données absentes et téléchargement impossible
+        st.error("Les données de l'enquête ne sont pas disponibles.")
+        st.code("uv run python get_data.py", language="bash")
+        st.caption(f"Détail : {exc}")
+        st.stop()
+    f = sidebar_filters(d26)
+    pop26 = apply_filters(d26, f)
+    pop25 = apply_filters(d25, f) if d25 is not None else None
+    return d26, d25, f, pop26, pop25
