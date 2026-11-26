@@ -19,3 +19,14 @@ Toute comparaison entre les deux enquêtes passe par `devia/harmonisation.py`. C
 | Fréquence / types d'usage (`AISelect`) | 2025 : fréquence d'usage (tous les jours, hebdo…). 2026 : types d'outils utilisés au travail. |
 | Agents (`AIAgents` 2025 / `AIFreq_3`, `AICodeAgent*` 2026) | Formulations, bases et listes d'outils différentes. |
 | Utilité, satisfaction par tâche, coûts, organisation | Questions nouvelles en 2026. |
+
+## Limites à connaître
+
+1. **Taux de réponse au bloc IA différent.** Parmi les développeurs professionnels : 70 % ont répondu à `AIComplex` en 2025, 50 % en 2026. Si les personnes qui répondent ont changé, une partie de l'écart peut venir de cette composition. L'application affiche ces taux (onglet « Méthode et limites »).
+2. **Population presque identique, pas identique.** « Développeur de profession » (2025) et « le code est une partie principale de mon métier » (2026) se recouvrent largement sans coïncider.
+3. **Volontaires.** Dans les deux années, ce sont des volontaires d'une enquête en ligne. Aucune pondération n'est publiée. Les parts décrivent les répondants.
+4. **Échelle d'attitude.** « Favorable » (2025) est assimilé à « Somewhat favorable » (2026) : hypothèse de travail, non vérifiable avec ces données. C'est pourquoi la comparaison se fait sur 3 classes agrégées et non sur les 5 niveaux.
+
+## Contrôle de robustesse (voir DECISIONS.md, §6)
+
+La hausse de la capacité perçue (34 % → 60 % d'avis positifs, développeurs professionnels, tous pays) subsiste parmi les seuls utilisateurs d'IA (37 % → 60 % ; utilisateur = « Yes… » à `AISelect` en 2025, au moins une famille d'outils en 2026) : elle ne vient pas d'un simple changement de la part d'utilisateurs parmi les répondants. Ce contrôle ne lève pas le doute sur la composition des répondants au bloc IA (limite 1).
