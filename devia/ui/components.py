@@ -67,3 +67,20 @@ def markdown_doc(path: Path) -> None:
             buf.append(line)
     if buf:
         st.markdown("\n".join(buf))
+
+
+def show_figure(fig, f: Filters, year: int, n: int, n_pop: int | None = None, note: str = "") -> None:
+    """Affiche une figure matplotlib suivie de sa légende de population (qui, année, effectif)."""
+    st.pyplot(fig, clear_figure=True)
+    st.caption(population.caption(f, year, n, n_pop, note))
+
+
+def footer_text(f: Filters, year: int, n: int) -> str:
+    """Pied inscrit dans l'image elle-même : la figure garde sa population si on l'exporte."""
+    return population.plain_caption(f, year, n) + " Volontaires d'une enquête en ligne, pas tous les développeurs."
+
+
+def dropped_note(dropped: list) -> None:
+    if dropped:
+        txt = ", ".join(f"{g} (n = {n})" for g, n in dropped)
+        st.caption(f"Groupes non affichés car trop petits (moins de 30 répondants) : {txt}.")
