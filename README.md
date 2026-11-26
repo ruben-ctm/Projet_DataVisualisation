@@ -3,6 +3,8 @@
 Application Streamlit d'analyse de l'enquête annuelle Stack Overflow 2026, comparée à 2025 lorsque les questions sont comparables.
 Projet final du module *Data Visualisation* (ECE Paris, Ing4 Data & IA).
 
+**Application en ligne : <https://projetdatavisualisationece2026.streamlit.app/>**
+
 **Commanditaire (fictif) :** la direction technique d'une ESN française de 3 000 personnes qui décide comment équiper ses développeurs en assistants et agents de code.
 **Message du tableau de bord :** les développeurs jugent l'IA nettement plus capable qu'en 2025 sur les tâches complexes, mais l'attitude générale n'a pas bougé et la confiance reste conditionnée à la vérification : le sujet n'est plus l'adoption, c'est la vérification.
 
@@ -74,27 +76,28 @@ get_data.py             téléchargement des données dans data/
 
 ## Travail en groupe
 
-Chaque membre a déposé un commit à son nom, qui contient sa part du projet (`git log` donne l'ordre et les auteurs) :
+Chaque membre a contribué avec ses propres commits, depuis son compte (`git log --format="%an | %s"` donne les auteurs). Répartition du travail :
 
 | Membre | Part du projet |
 |---|---|
-| Ruben COMBE--TAMAIN | socle du dépôt (uv, configuration, téléchargement des données), README, **axe 1 Adoption**, captures d'écran |
+| Ruben COMBE--TAMAIN | socle du dépôt (uv, configuration, téléchargement des données), README, **axe 1 Adoption**, captures d'écran, déploiement |
 | Edwin DREAN-AVRILLON | libellés, statistiques (parts, intervalles de Wilson), **harmonisation 2025-2026**, indicateurs partagés, **axe 3 Agents de code**, biographie des données |
 | Antoine REVERSAT | chargement et préparation des données, filtres et population, **axe 2 Confiance**, cadrage, notebook de prise en main |
 | Arthur REYNAUD | graphiques et composants partagés, thème, **axe 4 Coûts cachés**, journal d'exploration, script du brief |
 | Léo VAZ SAMPAIO--DESTOT | tableau de bord et message, cache et état de session, **axe 5 Organisation**, brief d'une page, architecture et décisions |
 
-Les tests de chaque module sont dans le commit de la personne qui l'a écrit.
+Les tests de chaque module sont écrits par la personne qui a écrit le module.
 
 ## Déploiement (bonus)
 
-Application déployée sur **Streamlit Community Cloud** (gratuit) : <https://share.streamlit.io>.
+L'application est publiée sur **Streamlit Community Cloud** (gratuit) : <https://projetdatavisualisationece2026.streamlit.app/>
 
-1. Se connecter avec le compte GitHub qui possède le dépôt (autoriser l'accès au dépôt, public ou privé).
+Pour la redéployer ou la republier :
+
+1. Se connecter sur <https://share.streamlit.io> avec le compte GitHub qui possède le dépôt.
 2. **Create app** → *Deploy a public app from GitHub* : dépôt `ruben-ctm/Projet_DataVisualisation`, branche `main`, fichier principal `app.py`.
 3. *Advanced settings* : Python **3.12**. Aucun secret n'est nécessaire.
-4. **Deploy**. Les dépendances sont lues dans `uv.lock` (premier fichier reconnu par la plateforme ; ne pas ajouter de `requirements.txt` en parallèle). Les données (~260 Mo) sont téléchargées au premier lancement depuis le dépôt public de Stack Overflow : compter quelques minutes.
-5. Mettre l'adresse publique (`https://<nom>.streamlit.app`) en tête de ce README et dans la remise.
+4. **Deploy**. Les dépendances sont lues dans `uv.lock` (premier fichier reconnu par la plateforme : ne pas ajouter de `requirements.txt` en parallèle). Les données (~260 Mo) sont téléchargées au premier lancement depuis le dépôt public de Stack Overflow : compter quelques minutes.
 
 Limites à connaître : mémoire limitée (l'application consomme environ 500 Mo au pic, mesuré) et mise en veille après environ 12 h sans visite (le premier visiteur la réveille, ce qui relance le chargement). Avant une démonstration, ouvrir l'adresse une fois.
 
