@@ -123,3 +123,88 @@ def stacked_hbar(wide: pd.DataFrame, colors: Sequence[str], title: str, footer: 
               frameon=False, fontsize=8.5, handlelength=1.2)
     _frame(fig, title, subtitle, footer)
     return fig
+
+
+def paired_bars(labels: Sequence[str], a: Sequence[float], b: Sequence[float], title: str, footer: str, *,
+                a_name: str = "2025", b_name: str = "2026", a_ci=None, b_ci=None, a_n=None, b_n=None,
+                subtitle: str | None = None, xlabel: str = "Part des répondants", wrap: int = 30) -> plt.Figure:
+    """Deux séries (gris = référence, bleu = 2026) par catégorie, avec IC et effectifs."""
+    labels = [str(x) for x in labels]
+    a, b = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
+    a_n = None if a_n is None else np.asarray(a_n)
+    b_n = None if b_n is None else np.asarray(b_n)
+    k = len(labels)
+    fig, ax = _fig(k * 2, height_per_row=0.36)
+    y = np.arange(k)[::-1].astype(float)
+    h = 0.34
+    for series, off, color, name, ci, ns in ((a, +h / 2, GRAY, a_name, a_ci, a_n), (b, -h / 2, BLUE, b_name, b_ci, b_n)):
+        vals = np.asarray(series, dtype=float)
+        ax.barh(y + off, vals, height=h - 0.04, color=color, label=name, zorder=3)
+        if ci is not None:
+            lo, hi = np.asarray(ci[0], float), np.asarray(ci[1], float)
+            ax.errorbar(vals, y + off, xerr=[vals - lo, hi - vals], fmt="none", ecolor=INK2, elinewidth=1,
+                        capsize=2.5, zorder=4)
+        for yy, v, i in zip(y + off, vals, range(k)):
+            end = np.asarray(ci[1], float)[i] if ci is not None else v
+            txt = _pct(v) + (f"  (n = {int(ns[i]):,})".replace(",", " ") if ns is not None else "")
+            ax.text(end + 0.01, yy, txt, va="center", fontsize=8.3, color=INK, zorder=5)
+    ax.set_yticks(y, [_wrap(l, wrap) for l in labels])
+    ax.set_xlim(0, min(1.0, float(np.nanmax([np.nanmax(a), np.nanmax(b)])) * 1.5 + 0.05))
+    ax.xaxis.set_major_formatter(lambda x, _: f"{100 * x:.0f} %")
+    ax.set_xlabel(xlabel, fontsize=9)
+    ax.tick_params(axis="y", length=0)
+    handles, names = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1][::-1], names, loc="lower right", frameon=False, fontsize=9)
+    _frame(fig, title, subtitle, footer)
+    return fig
+
+
+def diverging_bars(labels: Sequence[str], values: Sequence[float], title: str, footer: str, *,
+                   subtitle: str | None = None, ns=None, xlabel: str = "Écart de parts (points de %)",
+                   wrap: int = 30, pos_name: str = "Positif", neg_name: str = "Négatif") -> plt.Figure:
+    """Barres divergentes autour de 0 (positif = bleu, négatif = rouge)."""
+    vals = np.asarray(values, dtype=float)
+    labels = [str(x) for x in labels]
+    ns = None if ns is None else np.asarray(ns)
+    fig, ax = _fig(len(vals))
+    y = np.arange(len(vals))[::-1]
+    ax.barh(y, vals, height=0.58, color=[BLUE if v >= 0 else RED for v in vals], zorder=3)
+    ax.axvline(0, color=INK2, linewidth=1, zorder=4)
+    span = max(abs(vals).max(), 0.05)
+    for yy, v, i in zip(y, vals, range(len(vals))):
+        txt = f"{100 * v:+.0f} pts" + (f"  (n = {int(ns[i]):,})".replace(",", " ") if ns is not None else "")
+        ax.text(v + (0.015 if v >= 0 else -0.015) * span / 0.3, yy, txt, va="center",
+                ha="left" if v >= 0 else "right", fontsize=8.5, zorder=5)
+    ax.set_yticks(y, [_wrap(l, wrap) for l in labels])
+    ax.set_xlim(-span * 1.55, span * 1.55)
+    ax.xaxis.set_major_formatter(lambda x, _: f"{100 * x:+.0f}")
+    ax.set_xlabel(f"{xlabel}   ← {neg_name}  |  {pos_name} →", fontsize=9)
+    ax.tick_params(axis="y", length=0)
+    _frame(fig, title, subtitle, footer)
+    return fig
+
+
+def dumbbell(labels: Sequence[str], a: Sequence[float], b: Sequence[float], title: str, footer: str, *,
+             a_name: str, b_name: str, subtitle: str | None = None, ns=None, wrap: int = 28,
+             xlabel: str = "Part des répondants") -> plt.Figure:
+    """Deux valeurs par ligne reliées par un trait (ex. « a utilisé » vs « veut utiliser »)."""
+    labels = [str(x) for x in labels]
+    ns = None if ns is None else np.asarray(ns)
+    fig, ax = _fig(len(labels))
+    y = np.arange(len(labels))[::-1]
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    ax.hlines(y, np.minimum(a, b), np.maximum(a, b), color=GRID, linewidth=3, zorder=2)
+    ax.scatter(a, y, s=55, color=GRAY, zorder=4, label=a_name, edgecolor=SURFACE, linewidth=1.5)
+    ax.scatter(b, y, s=55, color=BLUE, zorder=4, label=b_name, edgecolor=SURFACE, linewidth=1.5)
+    for yy, va, vb, i in zip(y, a, b, range(len(a))):
+        right = max(va, vb)
+        ax.text(right + 0.012, yy, f"{_pct(va)} → {_pct(vb)}" + (f"  (n = {int(ns[i]):,})".replace(",", " ") if ns is not None else ""),
+                va="center", fontsize=8.3)
+    ax.set_yticks(y, [_wrap(l, wrap) for l in labels])
+    ax.set_xlim(0, min(1.0, float(max(a.max(), b.max())) * 1.55 + 0.05))
+    ax.xaxis.set_major_formatter(lambda x, _: f"{100 * x:.0f} %")
+    ax.set_xlabel(xlabel, fontsize=9)
+    ax.tick_params(axis="y", length=0)
+    ax.legend(loc="lower right", frameon=False, fontsize=9)
+    _frame(fig, title, subtitle, footer)
+    return fig
